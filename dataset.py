@@ -4,6 +4,7 @@ from scipy.io import wavfile
 import librosa
 import os
 from keras.utils import to_categorical
+
 class BreathDataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
     def __init__(self, directory, 
@@ -13,8 +14,6 @@ class BreathDataGenerator(keras.utils.Sequence):
                     classes=None, 
                     shuffle=True):
         'Initialization'
-        print("In Init function")
-
         self.directory = directory
         self.list_labels = list_labels
         self.dim = dim
@@ -23,6 +22,7 @@ class BreathDataGenerator(keras.utils.Sequence):
         self.classes = len(self.list_labels)
         self.shuffle = shuffle
         self.on_epoch_end()
+
     def __len__(self):
         'Denotes the number of batches per epoch'
         return int(np.floor(len(self.wavs) / self.batch_size))
@@ -62,18 +62,8 @@ class BreathDataGenerator(keras.utils.Sequence):
     def __feature_extraction(self, list_wav, list_label):
         # print("Go to feature extraction!!!")
         'Generates data containing batch_size samples'
-        # Initialization
         X = []
         Y = []
-        # print("batch size")
-        # print(self.batch_size)
-        # print("Start")
-        # print("listwav: ")
-        # print(list_wav)
-        # print("listlabel")
-        # print(list_label)
-        # print("after geting list label")
-        # Generate data
         for i in range(self.batch_size):
             rate, data = wavfile.read(list_wav[i]) #bug in here
             # print("End")
@@ -83,19 +73,10 @@ class BreathDataGenerator(keras.utils.Sequence):
             feature = librosa.feature.mfcc(y=data, sr=rate, 
                                            n_mfcc=40, fmin=0, fmax=8000,
                                            n_fft=int(16*64), hop_length=int(16*32), power=2.0)
-            # print("Feature shape is")
-            # print(feature.shape)
             feature = np.resize(feature, self.dim)
-            # feature = np.reshape(feature, self.dim)
-            # print("feature after reshape: ")
-            # print(feature.shape)
             category_label =  to_categorical(list_label[i], num_classes= len(self.list_labels) )
-            # print(len(self.list_labels))
             X.append(feature)
             Y.append(category_label)
-            # print("Label is: ")
-            # print(list_label[i])
-            # print(category_label)
         
         X = np.array(X, dtype=np.float32)
         Y = np.array(Y, dtype=int)
