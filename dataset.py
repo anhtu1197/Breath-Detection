@@ -8,7 +8,7 @@ from keras.utils import to_categorical
 class BreathDataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
     def __init__(self, directory, 
-                    list_labels=['normal', 'deep', 'rush'], 
+                    list_labels=['normal', 'deep', 'strong'], 
                     batch_size=32,
                     dim=None,
                     classes=None, 
