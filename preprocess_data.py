@@ -108,8 +108,8 @@ def split_by_label(source_path, destination_path, label_path, output_folder):
 
 
 # Devset
-split_by_label(DEV_INPUT_PATH, DEV_OUTPUT_PATH, DEV_LABEL_PATH, TRAINING_OUTPUT_FOLDER)
-split_by_label(DEV_INPUT_PATH, DEV_OUTPUT_PATH, DEV_LABEL_PATH, TESTING_OUTPUT_FOLDER)
+split_by_label(DEV_INPUT_PATH, DEV_OUTPUT_PATH, DEV_LABEL_PATH, TRAIN_OUTPUT_FOLDER)
+split_by_label(DEV_INPUT_PATH, DEV_OUTPUT_PATH, DEV_LABEL_PATH, TEST_OUTPUT_FOLDER)
 
 # # Testset
 # split_by_label(TEST_INPUT_PATH, TEST_OUTPUT_PATH, TEST_LABEL_PATH)

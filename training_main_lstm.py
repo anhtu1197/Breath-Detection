@@ -30,6 +30,7 @@ from training_constant import (
     TRAINING_SOURCE,
     VALID_SOURCE,
     MODEL_OUTPUT,
+    RUN_TITLE,
 )
 
 
@@ -67,7 +68,7 @@ model.summary()
 if not os.path.exists(MODEL_OUTPUT):
     os.makedirs(MODEL_OUTPUT)
 
-filepath= os.path.join(MODEL_OUTPUT, "LSTM-weights-improvement_bi_lstm-{epoch:02d}-{accuracy:.2f}-{val_accuracy:.2f}.hdf5") 
+filepath= os.path.join(MODEL_OUTPUT, RUN_TITLE + "LSTM-weights-improvement_bi_lstm-{epoch:02d}-{accuracy:.2f}-{val_accuracy:.2f}.hdf5") 
 # filepath="./model_output/LSTM-weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5"
 
 checkpoint = ModelCheckpoint(filepath, monitor='val_acc', save_best_only=False, mode='max')
