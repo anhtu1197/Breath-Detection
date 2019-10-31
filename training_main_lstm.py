@@ -3,9 +3,11 @@ import os
 import json
 import pickle
 
+# os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 
 import keras
 import tensorflow as tf
+from tensorflow.keras.utils import multi_gpu_model
 from keras.backend.tensorflow_backend import set_session
 import librosa
 from sklearn.metrics import classification_report, confusion_matrix
@@ -13,6 +15,12 @@ from keras.callbacks import ModelCheckpoint
 
 from LSTM_MODEL import LSTM_MODEL
 from dataset import BreathDataGenerator
+
+# os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3"
+# config = tf.ConfigProto()
+# config.gpu_options.allow_growth=True
+# sess = tf.Session(config=config)
+
 from training_constant import (
     BATCH_SIZE,
     LIST_LABELS,
@@ -24,10 +32,6 @@ from training_constant import (
     MODEL_OUTPUT,
 )
 
-
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True
-set_session(tf.Session(config=config))
 
 # Generate data for training
 train_generator = BreathDataGenerator(
@@ -51,30 +55,33 @@ print("Validation samples: {}".format(N_VALID_SAMPLES))
 
 # build LSTM model 
 
+# model = LSTM_MODEL.build_simple_lstm(data_input_shape=INPUT_SIZE, classes=N_CLASSES, learning_rate=0.001)
+
+# model = LSTM_MODEL.build_residual_bilstm(data_input_shape=INPUT_SIZE, classes=N_CLASSES, learning_rate=0.001)
+
 model = LSTM_MODEL.build_bilstm(data_input_shape=INPUT_SIZE, classes=N_CLASSES, learning_rate=0.001)
+
 model.summary()
 
 # Checkpoint
 if not os.path.exists(MODEL_OUTPUT):
     os.makedirs(MODEL_OUTPUT)
 
-filepath= os.path.join(MODEL_OUTPUT, "LSTM-weights-improvement-{epoch:02d}-{acc:.2f}-{val_acc:.2f}.hdf5") 
+filepath= os.path.join(MODEL_OUTPUT, "LSTM-weights-improvement_bi_lstm-{epoch:02d}-{accuracy:.2f}-{val_accuracy:.2f}.hdf5") 
 # filepath="./model_output/LSTM-weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5"
 
-checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=False, mode='max')
+checkpoint = ModelCheckpoint(filepath, monitor='val_acc', save_best_only=False, mode='max')
 callbacks_list = [checkpoint]
 
 # Start training
 model.fit_generator(
         train_generator,
-        steps_per_epoch=N_TRAIN_SAMPLES // BATCH_SIZE,
+        steps_per_epoch= N_TRAIN_SAMPLES // BATCH_SIZE,
         initial_epoch=0,
         epochs=N_EPOCHS,
         validation_data=validation_generator,
         validation_steps=N_VALID_SAMPLES // BATCH_SIZE,
         callbacks=callbacks_list,
-        max_queue_size=6,
-        workers=3,
-        use_multiprocessing=False
+        #use_multiprocessing=True,
 )
 

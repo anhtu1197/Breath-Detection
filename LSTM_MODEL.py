@@ -1,4 +1,13 @@
 import numpy as np
+import tensorflow as tf
+
+# config = tf.ConfigProto()
+# config.gpu_options.allow_growth=True
+# sess = tf.Session(config=config)
+
+import os
+# os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Activation, Dropout, Flatten, Dense
@@ -7,6 +16,7 @@ from keras.layers import Dense, Embedding, LSTM, Bidirectional, Flatten
 from keras.layers.merge import add
 from keras.layers import Input
 from keras.models import Model
+from keras.utils import multi_gpu_model
 
 class LSTM_MODEL(object):
     @staticmethod
@@ -30,7 +40,7 @@ class LSTM_MODEL(object):
         model.add(Bidirectional(LSTM(128), input_shape=data_input_shape))
         model.add(Dropout(0.5))
         model.add(Dense(classes, activation='softmax'))
-        opt = Adam(lr=0.01)
+        opt = Adam(lr=learning_rate)
         model.compile(loss="categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
         model.summary()
 
@@ -53,6 +63,5 @@ class LSTM_MODEL(object):
         opt = Adam(lr=learning_rate)
         model.compile(loss="categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
         model.summary()
-
         return model
 
